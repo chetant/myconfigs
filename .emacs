@@ -18,6 +18,9 @@
  )
 
 (defalias 'yes-or-no-p 'y-or-n-p)
+(setq-default indent-tabs-mode nil)
+(setq c-default-style "linux"
+      c-basic-offset 2)
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (require 'package)
@@ -59,3 +62,4 @@
 (global-set-key (kbd "<C-tab>") 'other-window)
 (global-set-key (kbd "C-/") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "<f5>") 'recompile)
