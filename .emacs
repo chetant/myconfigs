@@ -39,6 +39,11 @@
 (require 'window-numbering)
 (window-numbering-mode t)
 
+(global-smartscan-mode t)
+
+(require 'auto-highlight-symbol)
+(global-auto-highlight-symbol-mode t)
+
 (require 'auto-complete)
 (ac-define-source ghc-mod
     '((depends ghc)
@@ -63,3 +68,87 @@
 (global-set-key (kbd "C-/") 'comment-or-uncomment-region)
 (global-set-key (kbd "C-z") 'undo)
 (global-set-key (kbd "<f5>") 'recompile)
+
+
+;; Pygmalion commands.
+(setq compilation-auto-jump-to-first-error 1)
+
+(defun column-number-at-pos (point)
+  (save-excursion
+    (goto-char point)
+    (beginning-of-line)
+    (+ 1 (- point (point)))))
+
+(defun pygmalion-command (cmd)
+  (compilation-start
+    (concat "pygmalion "
+            cmd
+            " "
+            (buffer-file-name)
+            " "
+            (number-to-string (line-number-at-pos))
+            " "
+            (number-to-string (column-number-at-pos (point))))))
+
+(defun pygmalion-file-command (cmd)
+  (compilation-start
+    (concat "pygmalion "
+            cmd
+            " "
+            (buffer-file-name))))
+
+(defun pygmalion-dot-command (cmd)
+  (compilation-start
+    (concat "pygmalion "
+            cmd
+            " "
+            (buffer-file-name)
+            " "
+            (number-to-string (line-number-at-pos))
+            " "
+            (number-to-string (column-number-at-pos (point)))
+            " | dot -Tpdf > /tmp/pygmalion."
+            cmd
+            ".pdf && open /tmp/pygmalion."
+            cmd
+            ".pdf")))
+
+(defun pygmalion-file-dot-command (cmd)
+  (compilation-start
+    (concat "pygmalion "
+            cmd
+            " "
+            (buffer-file-name)
+            " | dot -Tpdf > /tmp/pygmalion."
+            cmd
+            ".pdf && open /tmp/pygmalion."
+            cmd
+            ".pdf")))
+
+(defun pygmalion-go-to-definition () (interactive) (pygmalion-command "definition"))
+(defun pygmalion-go-to-declaration () (interactive) (pygmalion-command "declaration"))
+(defun pygmalion-callers () (interactive) (pygmalion-command "callers"))
+(defun pygmalion-callees () (interactive) (pygmalion-command "callees"))
+(defun pygmalion-bases () (interactive) (pygmalion-command "bases"))
+(defun pygmalion-overrides () (interactive) (pygmalion-command "overrides"))
+(defun pygmalion-members () (interactive) (pygmalion-command "members"))
+(defun pygmalion-references () (interactive) (pygmalion-command "references"))
+(defun pygmalion-hierarchy () (interactive) (pygmalion-dot-command "hierarchy"))
+(defun pygmalion-inclusions () (interactive) (pygmalion-file-command "inclusions"))
+(defun pygmalion-includers () (interactive) (pygmalion-file-command "includers"))
+(defun pygmalion-inclusion-hierarchy () (interactive) (pygmalion-file-dot-command "inclusion-hierarchy"))
+
+;; (eval-after-load "cc-mode"
+;;   '(progn
+;;       (define-key c-mode-base-map (kbd "M-p M-d") 'pygmalion-go-to-definition)
+;;       (define-key c-mode-base-map (kbd "M-p M-D") 'pygmalion-go-to-declaration)
+;;       (define-key c-mode-base-map (kbd "M-p M-c") 'pygmalion-callers)
+;;       (define-key c-mode-base-map (kbd "M-p M-C") 'pygmalion-callees)
+;;       (define-key c-mode-base-map (kbd "M-p M-b") 'pygmalion-bases)
+;;       (define-key c-mode-base-map (kbd "M-p M-o") 'pygmalion-overrides)
+;;       (define-key c-mode-base-map (kbd "M-p M-m") 'pygmalion-members)
+;;       (define-key c-mode-base-map (kbd "M-p M-r") 'pygmalion-references)
+;;       (define-key c-mode-base-map (kbd "M-p M-h") 'pygmalion-hierarchy)
+;;       (define-key c-mode-base-map (kbd "M-p M-i") 'pygmalion-inclusions)
+;;       (define-key c-mode-base-map (kbd "M-p M-I") 'pygmalion-includers)
+;;       (define-key c-mode-base-map (kbd "M-p M-i M-h") 'pygmalion-inclusion-hierarchy)))
