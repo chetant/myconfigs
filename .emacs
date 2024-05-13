@@ -10,6 +10,7 @@
  '(custom-enabled-themes '(leuven))
  '(custom-safe-themes
    '("5e5771e6ea0c9500aa87e987ace1d9f401585e22a976777b6090a1554f3771c6" default))
+ '(epg-gpg-program "/opt/homebrew/bin/gpg")
  '(inhibit-startup-screen t)
  '(org-babel-load-languages '((python . t)))
  '(package-selected-packages
@@ -71,7 +72,7 @@
 
 (use-package conda
   :ensure t
-  :config
+  :init
   (defun chetan-set-conda-python ()
     (setq python-shell-interpreter (executable-find "python")))
   :hook
@@ -81,7 +82,9 @@
   :init
   (setq org-startup-truncated nil)
   (setq org-src-tab-acts-natively t)
-  (setq org-src-fontify-natively t)  
+  (setq org-src-fontify-natively t)
+
+  (setq org-confirm-babel-evaluate nil)
 
   (defun chetan-org-insert-python-code-block ()
     "Insert python code block"
